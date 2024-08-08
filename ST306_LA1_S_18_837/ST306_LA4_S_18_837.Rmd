@@ -1,0 +1,135 @@
+---
+title: "ST306_LA4_S_18_837"
+author: "S/18/837"
+date: "2023-09-26"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(tinytex)
+library(ggplot2)
+```
+```{r}
+col_types <- "dccffi"
+travel_data <- read_csv("../ST306_LA1_S_18_837/data/travel_data.csv"
+                        , col_types = col_types)
+```
+```{r}
+view(travel_data)
+```
+Main Question : 
+What is the most common mode of transportation used to travel from home to work?
+```{r}
+x1 <- travel_data%>%
+  group_by(mode_of_trans)%>%
+  summarise(Count = sum(count))%>%
+  select(mode_of_trans, Count)%>%
+  arrange(desc(Count))
+x1
+```
+
+```{r}
+x1 %>%
+  ggplot(aes(x=mode_of_trans, y=Count, fill = mode_of_trans))+geom_bar(stat = "identity")+
+  labs(title = "Distribution of Mode of Transportation",x = "Mode of Transportation",
+       y = "Count")
+```
+Conclusion :	The most common mode of transportation in the travel_data data set is "drove_alone".
+
+
+
+Sub Question 1:
+Q1)What is the most common mode of transportation used to travel from home to
+work in 2018?
+```{r}
+Q1 <- travel_data %>%
+  filter(year == 2018) %>%
+  group_by(mode_of_trans) %>%
+  summarise(Count = sum(count)) %>%
+  select(mode_of_trans, Count)
+Q1
+```
+```{r}
+Q1 %>% 
+  ggplot(aes(x=mode_of_trans, y=Count,fill = mode_of_trans))+geom_bar(stat = "identity") +
+  labs(title = "Distribution of Mode of Transportation in 2018",x = "Mode of Transportation",
+       y = "Count")
+```
+Conclusion : The most common mode of transportation in 2018 in the travel_data data set is "drove_alone".
+
+
+
+Sub Question 2:
+Q2)  How does the mode of transportation vary by region?
+
+```{r}
+travel_data %>%
+  group_by(region, mode_of_trans) %>%
+  summarise(count = sum(count)) %>%
+  ggplot(aes(x = region, y = count, fill = mode_of_trans)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Mode of Transportation Distribution by Region",
+       x = "Region",
+       y = "Count") 
+```
+Conclusion : In all regions "drove alone" is the more commonly used method to travel and "bicycle" has the lowest                 rate.               
+
+
+Sub Question 3: 
+Q3)How does the mode of transportation vary by gender?
+```{r}
+travel_data%>%
+  group_by(gender, mode_of_trans) %>%
+  summarise(count = sum(count)) %>%
+  ggplot(aes(x = gender, y = count, fill = mode_of_trans)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Mode of Transportation Distribution by Gender",
+       x = "Gender",
+       y = "Count")
+```
+Conclusion : Generally, "drove_alone" is the most common mode for both genders, but the proportions differ.
+
+
+Sub Question 4:
+Q4) What is the most common mode of transport in Michigan in 2018?
+```{r}
+travel_data %>%
+  filter(year == 2018 & state == "Michigan")%>%
+  group_by(mode_of_trans)%>%
+  summarise(Count = sum(count))
+```
+
+```{r}
+travel_data %>%
+  filter(year == 2018 & state == "Michigan")%>%
+  group_by(mode_of_trans)%>%
+  summarise(Count = sum(count))%>%
+  ggplot(aes(x=mode_of_trans, y=Count, fill = mode_of_trans))+geom_bar(stat = "identity") +
+    labs(title = "Distribution of Mode of Transportation of Michigan in 2018",x = "Mode of Transportation",
+       y = "Count")
+```
+
+Conclusion : The more commonly transportation mode in Michigan in 2018 is drove alone followed by carpooled, walking,
+            public transportation, taxi cab or other methods and bicycle.
+            
+            
+Sub Question 5: 
+Q5) Are there any trends in transportation mode usage over the years?
+```{r}
+travel_data %>%
+  group_by(year, mode_of_trans) %>%
+  summarise(total_count = sum(count)) %>%
+  ggplot(aes(x = year, y = total_count, color = mode_of_trans)) +
+  geom_line() +
+  labs(title = "Trends in Transportation Mode Usage Over the Years",
+       x = "Year",
+       y = "Total Count")
+```
+Conclusion : We can see a significant increment of driving alone and carpooled methods but others more likely to the             same. 
